@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">MemosCompose</string>
+
+    <string name="navigate_home">Home</string>
+    <string name="navigate_explore">Explore</string>
+    <string name="navigate_resource">Resource</string>
+    <string name="navigate_collect">Collect</string>
+    <string name="navigate_setting">Setting</string>
+
+
+</resources>
