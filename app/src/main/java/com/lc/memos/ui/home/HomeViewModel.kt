@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.lc.memos.data.DataRepository
 import com.lc.memos.data.db.MemoInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
 
 private data class HomeUiState(
@@ -16,7 +17,7 @@ class HomeViewModel @Inject constructor(private val repository: DataRepository) 
 
     fun getAll(){
 
-        repository.getAllMemoList()
+        repository.getAllMemoList().
     }
 
 }

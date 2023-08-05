@@ -82,7 +82,7 @@ interface MemosApiServe {
         @Query("creatorId") creatorId: Long? = null,
         @Query("rowStatus") rowStatus: MemoRowState? = null,
         @Query("visibility") visibility: MemoVisibility? = null
-    ): ApiResponse<Memo>
+    ): ApiResponse<List<Memo>>
 
 //    @POST("/api/v1/memo")
 //    suspend fun createMemo(@Body body: CreateMemoInput): ApiResponse<Memo>

@@ -50,11 +50,9 @@ class ApiGsonConverterFactory(val gson: Gson) : Converter.Factory() {
         var targetType = TypeToken.get(type)
         if (type is ParameterizedType){
             val apiType = object : TypeToken<ApiResponse<*>>(){}.rawType
-
             val rawType = (type.rawType as Class<*>)
             Timber.d("parameterizedType rawType ${apiType.name},${rawType.name}")
             if (apiType.name == rawType.name){
-                Timber.d("parameterizedType rawType +++")
                 val childType = type.actualTypeArguments[0]
                 if (childType is WildcardType){
                     targetType = TypeToken.get(childType)
@@ -75,8 +73,7 @@ class ApiGsonConverterFactory(val gson: Gson) : Converter.Factory() {
 //                }
 //            }
         }
-
-
+        Timber.d("targetType $targetType")
         val adapter = gson.getAdapter(targetType)
         return GsonResponseBodyConverter(gson,adapter)
     }
