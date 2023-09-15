@@ -8,19 +8,16 @@ import com.lc.memos.data.db.MemoDao
 import com.lc.memos.data.db.MemoInfo
 import com.lc.memos.di.ApplicationScope
 import com.lc.memos.di.DefaultDispatcher
-import com.lc.memos.util.ApiResponse
-import com.lc.memos.util.Async
-import com.lc.memos.util.Failed
-import com.lc.memos.util.Success
+import com.lc.memos.util.AppSharedPrefs
+import com.lc.memos.data.api.Failed
+import com.lc.memos.data.api.Success
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
-import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -33,17 +30,19 @@ class DefaultDataRepository @Inject constructor(
 ) : DataRepository {
 
     private val JSON = "application/json; charset=utf-8".toMediaType()
-    override fun signIn(host: String, user: String, pwd: String): Flow<User?> {
-        val params = Gson().toJson(mapOf("username" to user,"password" to pwd))
-        return flow<User> {
-            withContext(dispatcher){
-                val response = safeApiCall {
-                    apiSource.signIn(params.toRequestBody(JSON))
+    override suspend fun signIn(host: String, user: String, pwd: String): Async<User> {
+        val params = Gson().toJson(mapOf("username" to user, "password" to pwd))
+        return withContext(dispatcher) {
+            val response = safeApiCall {
+                apiSource.signIn(params.toRequestBody(JSON))
+            }
+            when (response) {
+                is Success -> {
+                    AppSharedPrefs.appSettings.updateToken(response.data.openId)
+                    Async.Success(response.data)
                 }
-                when(response){
-                    is Success -> response.data
-                    is Failed -> response.error
-                }
+
+                is Failed -> Async.Error(response.code, response.msg)
             }
         }
 
@@ -54,12 +53,16 @@ class DefaultDataRepository @Inject constructor(
     }
 
     override fun getAllMemoList(): Flow<List<MemoInfo>> {
-        scope.launch(dispatcher) {
-            val api = apiSource.listMemo()
-            Timber.d("api $api")
+        return flow {
+            val response = safeApiCall {
+                apiSource.listMemo()
+            }
+            val data = when (response) {
+                is Success -> response.data.toLocal()
+                is Failed -> emptyList()
+            }
+            emit(data)
         }
-        Timber.d("getAllMemoList")
-        return flow {  }
     }
 
 

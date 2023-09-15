@@ -1,10 +1,12 @@
 package com.lc.memos.ui
 
+import android.widget.Toast
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.currentCompositionLocalContext
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -19,6 +21,7 @@ import com.lc.memos.ui.login.LoginScreen
 import com.lc.memos.ui.widget.MemosDestinations
 import com.lc.memos.ui.widget.MemosNavigationActions
 import kotlinx.coroutines.CoroutineScope
+import timber.log.Timber
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,7 +37,7 @@ fun MemosNavGraph(
 
         composable(MemosDestinations.LOGIN_ROUTE,arguments = listOf()){ navBackStackEntry ->
             LoginScreen(onSigned = {
-
+                Timber.d("user login success")
             })
         }
 

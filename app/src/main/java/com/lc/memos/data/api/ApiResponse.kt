@@ -1,9 +1,4 @@
-package com.lc.memos.util
-
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+package com.lc.memos.data.api
 
 sealed class ApiResponse<out T>{
 

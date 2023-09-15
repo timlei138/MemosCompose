@@ -22,8 +22,7 @@ fun MemoSnackBarHost(
     SnackbarHost(hostState = hostState,
         modifier = modifier
             .systemBarsPadding()
-            .wrapContentWidth(align = Alignment.Start)
-            .widthIn(max = 550.dp),
+            .wrapContentWidth(align = Alignment.CenterHorizontally),
         snackbar = snackBar
     )
 }

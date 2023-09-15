@@ -8,11 +8,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.ScaffoldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.ExitToApp
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.DropdownMenu
@@ -21,12 +24,14 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,21 +49,27 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.PopupProperties
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lc.memos.R
 import com.lc.memos.data.api.User
 import com.lc.memos.ui.theme.MemosComposeTheme
 import com.lc.memos.ui.widget.MemoSnackBarHost
+import kotlinx.coroutines.flow.asStateFlow
 
 
 private var host by mutableStateOf("http://82.156.120.42:8090")
 private var userName by mutableStateOf("stoneslc")
-private var pwd by  mutableStateOf("Kotlin1991&")
-private var token by  mutableStateOf("")
+private var pwd by mutableStateOf("Kotlin1991&")
+private var token by mutableStateOf("")
 private var loginMethod by mutableStateOf(SignMethod.USERNAME_AND_PASSWORD)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen(onSigned: () -> Unit, viewModel: LoginViewModel = hiltViewModel()) {
+fun LoginScreen(
+    onSigned: () -> Unit,
+    viewModel: LoginViewModel = hiltViewModel(),
+    scaffoldState: ScaffoldState = rememberScaffoldState()
+) {
 
     var menuExpanded by remember { mutableStateOf(false) }
 
@@ -112,14 +123,22 @@ fun LoginScreen(onSigned: () -> Unit, viewModel: LoginViewModel = hiltViewModel(
 
     }) { paddingValues ->
 
+        val uiState by viewModel.loginUiState.collectAsStateWithLifecycle()
 
-        val uiState = viewModel.loginUiState
+        uiState.msg?.let {
+            LaunchedEffect(scaffoldState, viewModel, uiState.msg) {
+                snackBarHostState.showSnackbar(uiState.msg!!)
+            }
+        }
 
         LoginContent(
-            loading = false,
-            user = null,
+            loading = uiState.loading,
             modifier = Modifier.padding(paddingValues)
         )
+
+        uiState.user?.let {
+            onSigned.invoke()
+        }
     }
 }
 
@@ -128,12 +147,18 @@ fun LoginScreen(onSigned: () -> Unit, viewModel: LoginViewModel = hiltViewModel(
 @Composable
 fun LoginContent(
     loading: Boolean,
-    user: User?,
     modifier: Modifier
 ) {
     Box(
         modifier = modifier
     ) {
+
+        if (loading) {
+            LinearProgressIndicator(modifier = Modifier
+                .fillMaxWidth()
+                .width(5.dp))
+        }
+
         Column(
             modifier = Modifier
                 .padding(10.dp)
@@ -227,13 +252,5 @@ fun LoginContent(
                 )
             }
         }
-    }
-}
-
-@Composable
-@Preview
-fun PreviewLoginScreen() {
-    MemosComposeTheme {
-        LoginScreen({})
     }
 }

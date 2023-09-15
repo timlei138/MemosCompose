@@ -1,4 +1,4 @@
-package com.lc.memos.util
+package com.lc.memos.data
 
 sealed class Async<out T> {
 

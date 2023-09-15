@@ -11,11 +11,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.lc.memos.ui.theme.MemosComposeTheme
 import com.lc.memos.ui.widget.MemosDestinations
 import com.lc.memos.ui.widget.MemosNavigationActions
+import com.lc.memos.util.AppSharedPrefs.Companion.appSettings
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -40,6 +42,11 @@ fun MemosApp(widthSizeClass: WindowWidthSizeClass) {
 
         val sizeAwareDrawerState = rememberSizeAwareDrawerState(isExpandedScreen = isExpandedScreen)
 
+        val hasToken = appSettings.getToken()
+
+        val startDestination =
+            if (hasToken?.isNotEmpty() == true) MemosDestinations.HOME_ROUTE else MemosDestinations.LOGIN_ROUTE
+
         ModalNavigationDrawer(drawerContent = {
             AppDrawer(
                 currentRoute = currentRoute,
@@ -58,7 +65,9 @@ fun MemosApp(widthSizeClass: WindowWidthSizeClass) {
                 MemosNavGraph(
                     isExpandedScreen,
                     navController,
-                    openDrawer = { coroutineScope.launch { sizeAwareDrawerState.open() } })
+                    openDrawer = { coroutineScope.launch { sizeAwareDrawerState.open() } },
+                    startDestination = startDestination
+                )
             }
         }
     }
