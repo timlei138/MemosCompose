@@ -1,21 +1,25 @@
 package com.lc.memos.data.api
 
 import com.lc.memos.util.ApiResponse
+import kotlinx.coroutines.CoroutineScope
 import okhttp3.Callback
 import okhttp3.Interceptor
+import okhttp3.RequestBody
 import okhttp3.Response
 import retrofit2.Call
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Query
 
 
-enum class MemoRowState(val state: String){
+enum class MemoRowState(val state: String) {
     VISIBILITY("NORMAL"),
     ARCHIVED("ARCHIVED")
 }
 
-enum class MemoVisibility(val state: String){
-    PRIVATE("PRIVATE"),PROTECTED("PROTECTED"),PUBLIC("PUBLIC")
+enum class MemoVisibility(val state: String) {
+    PRIVATE("PRIVATE"), PROTECTED("PROTECTED"), PUBLIC("PUBLIC")
 }
 
 data class Memo(
@@ -46,16 +50,28 @@ data class Resource(
     val updatedTs: Int
 )
 
+data class User(
+    val id: Int,
+    val rowStatus: String,
+    val createdTs: Long,
+    val updatedTs: Long,
+    val username: String,
+    val role: String,
+    val email: String,
+    val nickname: String,
+    val openId: String,
+    val avatarUrl: String
+)
 
-class MemosApiInterceptor : Interceptor{
+class MemosApiInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val original = chain.request()
         val url = original.url.newBuilder().let {
-            it.addQueryParameter("openId","ce3c633a-36e0-4ddd-90b4-d0528100a4b8")
+            //it.addQueryParameter("openId","ce3c633a-36e0-4ddd-90b4-d0528100a4b8")
             it.build()
         }
         val request = original.newBuilder().let {
-            it.method(original.method,original.body)
+            it.method(original.method, original.body)
             it.url(url)
             it.build()
         }
@@ -65,11 +81,22 @@ class MemosApiInterceptor : Interceptor{
 
 }
 
+suspend fun <T> safeApiCall(block: suspend () -> ApiResponse<out T>): ApiResponse<out T> {
+    try {
+        return block.invoke()
+    } catch (e: Exception) {
+        return ApiResponse.create(-1, e.message)
+    }
+}
 
 interface MemosApiServe {
 
-//    @POST("/api/v1/auth/signin")
-//    suspend fun signIn(@Body body: SignInInput): ApiResponse<Unit>
+    @POST("/api/v1/auth/signin")
+    suspend fun signIn(@Body body: RequestBody): ApiResponse<User>
+
+    @POST("/api/v1/auth/signin/sso")
+    suspend fun signInSSO(@Body body: RequestBody): ApiResponse<User>
+
 //
 //    @POST("/api/v1/auth/signout")
 //    suspend fun logout(): ApiResponse<Unit>
@@ -82,7 +109,7 @@ interface MemosApiServe {
         @Query("creatorId") creatorId: Long? = null,
         @Query("rowStatus") rowStatus: MemoRowState? = null,
         @Query("visibility") visibility: MemoVisibility? = null
-    ): ApiResponse<Memo>
+    ): ApiResponse<List<Memo>>
 
 //    @POST("/api/v1/memo")
 //    suspend fun createMemo(@Body body: CreateMemoInput): ApiResponse<Memo>

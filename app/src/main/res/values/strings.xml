@@ -7,5 +7,13 @@
     <string name="navigate_collect">Collect</string>
     <string name="navigate_setting">Setting</string>
 
-
+    <string name="login_host">Host</string>
+    <string name="login_username">Username</string>
+    <string name="login_pwd">Password</string>
+    <string name="login_token">Open Api</string>
+    <string name="login_changed_type">Sign in method</string>
+    <string name="login">Sign in</string>
+    <string name="logout">LogOut</string>
+    <string name="login_with_username">Username and password</string>
+    <string name="login_with_token">Open API</string>
 </resources>

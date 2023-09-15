@@ -8,7 +8,8 @@ import javax.inject.Inject
 
 private data class HomeUiState(
     val items: List<MemoInfo> = emptyList(),
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val isLogin: Boolean = false
 )
 
 @HiltViewModel

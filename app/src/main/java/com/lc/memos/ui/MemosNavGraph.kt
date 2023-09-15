@@ -15,6 +15,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.lc.memos.ui.home.HomeScreen
+import com.lc.memos.ui.login.LoginScreen
 import com.lc.memos.ui.widget.MemosDestinations
 import com.lc.memos.ui.widget.MemosNavigationActions
 import kotlinx.coroutines.CoroutineScope
@@ -25,11 +26,17 @@ fun MemosNavGraph(
     isExpandedScreen: Boolean,
     navController: NavHostController = rememberNavController(),
     openDrawer: () -> Unit = {},
-    startDestination: String = MemosDestinations.HOME_ROUTE,
+    startDestination: String = MemosDestinations.LOGIN_ROUTE,
     modifier: Modifier = Modifier,
 ) {
 
     NavHost(navController = navController, startDestination = startDestination,modifier = modifier){
+
+        composable(MemosDestinations.LOGIN_ROUTE,arguments = listOf()){ navBackStackEntry ->
+            LoginScreen(onSigned = {
+
+            })
+        }
 
         composable(MemosDestinations.HOME_ROUTE, arguments = listOf()){ navBackStackEntry ->
             HomeScreen(isExpandedScreen, openDrawer)

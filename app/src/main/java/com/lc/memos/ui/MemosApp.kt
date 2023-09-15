@@ -51,7 +51,9 @@ fun MemosApp(widthSizeClass: WindowWidthSizeClass) {
                 closeDrawer = { coroutineScope.launch { sizeAwareDrawerState.close() } })
         }, drawerState = sizeAwareDrawerState, gesturesEnabled = !isExpandedScreen) {
             Row {
-                if (isExpandedScreen) { }
+                if (isExpandedScreen) {
+
+                }
 
                 MemosNavGraph(
                     isExpandedScreen,
