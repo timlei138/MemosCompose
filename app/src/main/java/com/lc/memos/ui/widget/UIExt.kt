@@ -1,6 +1,8 @@
 package com.lc.memos.ui.widget
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -16,6 +18,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.SharingStarted
+
+private const val StopTimeoutMillis = 5000L
+
+val WhileUISubscribed: SharingStarted = SharingStarted.WhileSubscribed(StopTimeoutMillis)
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -31,14 +38,15 @@ fun LoadingContent(
         emptyContent()
     } else {
         val pullRefreshState =
-            rememberPullRefreshState(refreshing = loading, onRefresh = { onRefresh() })
-        Box(modifier.pullRefresh(pullRefreshState)) {
+            rememberPullRefreshState(refreshing = loading, onRefresh = onRefresh)
+        Box(modifier.fillMaxSize().pullRefresh(pullRefreshState)) {
             content()
         }
-        PullRefreshIndicator(refreshing = loading, state = pullRefreshState)
+        PullRefreshIndicator(refreshing = loading, state = pullRefreshState,modifier.fillMaxWidth())
     }
 
 }
+
 
 @Composable
 fun MemosSnackBarHost(

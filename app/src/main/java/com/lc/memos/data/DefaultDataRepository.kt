@@ -1,19 +1,23 @@
 package com.lc.memos.data
 
-import com.lc.memos.data.api.Memo
+import com.google.gson.Gson
 import com.lc.memos.data.api.MemosApiServe
-import com.lc.memos.data.api.safeCall
+import com.lc.memos.data.api.User
+import com.lc.memos.data.api.safeApiCall
 import com.lc.memos.data.db.MemoDao
 import com.lc.memos.data.db.MemoInfo
 import com.lc.memos.di.ApplicationScope
 import com.lc.memos.di.DefaultDispatcher
+import com.lc.memos.util.AppSharedPrefs
+import com.lc.memos.data.api.Failed
+import com.lc.memos.data.api.Success
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.launch
-import timber.log.Timber
+import kotlinx.coroutines.withContext
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody.Companion.toRequestBody
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -25,27 +29,40 @@ class DefaultDataRepository @Inject constructor(
     @ApplicationScope private val scope: CoroutineScope
 ) : DataRepository {
 
-    override fun getAllMemoList(): Flow<List<MemoInfo>> {
-        val list = flow<List<MemoInfo>> {
+    private val JSON = "application/json; charset=utf-8".toMediaType()
+    override suspend fun signIn(host: String, user: String, pwd: String): Async<User> {
+        val params = Gson().toJson(mapOf("username" to user, "password" to pwd))
+        return withContext(dispatcher) {
+            val response = safeApiCall {
+                apiSource.signIn(params.toRequestBody(JSON))
+            }
+            when (response) {
+                is Success -> {
+                    AppSharedPrefs.appSettings.updateToken(response.data.openId)
+                    Async.Success(response.data)
+                }
 
-            scope.safeCall<List<Memo>> {
-                call { apiSource.listMemo() }
-                onSuccess {
-                    val list = mutableListOf<MemoInfo>()
-                    it.forEach {
-                        list.add(it.toMemoInfo())
-                    }
-                    scope.launch {
-                        emit(list)
-                    }
-                }
-                onFailed { code, msg, e ->
-                    Timber.d("onFailed $code $msg $e")
-                }
+                is Failed -> Async.Error(response.code, response.msg)
             }
         }
-        Timber.d("getAllMemoList")
-        return list
+
+    }
+
+    override fun signInSSO(host: String, openApi: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun getAllMemoList(): Flow<List<MemoInfo>> {
+        return flow {
+            val response = safeApiCall {
+                apiSource.listMemo()
+            }
+            val data = when (response) {
+                is Success -> response.data.toLocal()
+                is Failed -> emptyList()
+            }
+            emit(data)
+        }
     }
 
 

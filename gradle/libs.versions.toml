@@ -41,7 +41,7 @@ kotlinx_immutable = "0.3.5"
 ksp = "1.8.10-1.0.9"
 material = "1.9.0"
 # @keep
-minSdk = "21"
+minSdk = "24"
 timber = "5.0.1"
 robolectric = "4.9.2"
 rome = "1.18.0"

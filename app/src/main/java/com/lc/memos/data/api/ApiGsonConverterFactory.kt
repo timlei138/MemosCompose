@@ -5,7 +5,6 @@ import com.google.gson.JsonIOException
 import com.google.gson.TypeAdapter
 import com.google.gson.reflect.TypeToken
 import com.google.gson.stream.JsonToken
-import com.lc.memos.util.ApiResponse
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -19,7 +18,6 @@ import java.io.IOException
 import java.io.OutputStreamWriter
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
-import java.lang.reflect.TypeVariable
 import java.lang.reflect.WildcardType
 
 class ApiGsonConverterFactory(val gson: Gson) : Converter.Factory() {
@@ -95,7 +93,7 @@ private class GsonRequestBodyConverter<T>(val gson: Gson,val adapter: TypeAdapte
     }
 }
 
-private class GsonResponseBodyConverter<T>(val gson: Gson,val adapter: TypeAdapter<T>) : Converter<ResponseBody,ApiResponse<T>>{
+private class GsonResponseBodyConverter<T>(val gson: Gson,val adapter: TypeAdapter<T>) : Converter<ResponseBody, ApiResponse<T>>{
     @Throws(IOException::class)
     override fun convert(value: ResponseBody): ApiResponse<T> {
         try {

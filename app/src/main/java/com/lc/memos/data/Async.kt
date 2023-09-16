@@ -1,4 +1,4 @@
-package com.lc.memos.util
+package com.lc.memos.data
 
 sealed class Async<out T> {
 
@@ -6,5 +6,5 @@ sealed class Async<out T> {
 
     data class Success<out T>(val data: T) : Async<T>()
 
-    data class Error(val errorCode: Int,val errorMsg: String): Async<Nothing>()
+    data class Error(val errorCode: Int,val errorMsg: String?): Async<Nothing>()
 }
