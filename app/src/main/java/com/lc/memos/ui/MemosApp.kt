@@ -9,16 +9,17 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.setValue
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.lc.memos.ui.login.LoginScreen
 import com.lc.memos.ui.theme.MemosComposeTheme
-import com.lc.memos.ui.widget.MemosDestinations
-import com.lc.memos.ui.widget.MemosNavigationActions
 import com.lc.memos.util.AppSharedPrefs.Companion.appSettings
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,32 +43,37 @@ fun MemosApp(widthSizeClass: WindowWidthSizeClass) {
 
         val sizeAwareDrawerState = rememberSizeAwareDrawerState(isExpandedScreen = isExpandedScreen)
 
-        val hasToken = appSettings.getToken()
+        var hasSigned by remember { mutableStateOf(appSettings.hasLogin()) }
 
-        val startDestination =
-            if (hasToken?.isNotEmpty() == true) MemosDestinations.HOME_ROUTE else MemosDestinations.LOGIN_ROUTE
+        if (!hasSigned){
+            LoginScreen(onSigned = {
+                hasSigned = true
+            })
 
-        ModalNavigationDrawer(drawerContent = {
-            AppDrawer(
-                currentRoute = currentRoute,
-                navigateToHome = { navigationActions.navigateToHome() },
-                navigateToExplore = { navigationActions.navigateToExplore() },
-                navigateToResource = { navigationActions.navigateToResource() },
-                navigateToCollect = { navigationActions.navigateToCollect() },
-                navigateToSetting = { navigationActions.navigateToSetting() },
-                closeDrawer = { coroutineScope.launch { sizeAwareDrawerState.close() } })
-        }, drawerState = sizeAwareDrawerState, gesturesEnabled = !isExpandedScreen) {
-            Row {
-                if (isExpandedScreen) {
+        }else{
+            ModalNavigationDrawer(drawerContent = {
+                AppDrawer(
+                    currentRoute = currentRoute,
+                    navigateToHome = { navigationActions.navigateToHome() },
+                    navigateToExplore = { navigationActions.navigateToExplore() },
+                    navigateToResource = { navigationActions.navigateToResource() },
+                    navigateToCollect = { navigationActions.navigateToCollect() },
+                    navigateToSetting = { navigationActions.navigateToSetting() },
+                    closeDrawer = { coroutineScope.launch { sizeAwareDrawerState.close() } })
+            }, drawerState = sizeAwareDrawerState) {
+                Row {
+                    if (isExpandedScreen) {
 
+                    }
+
+                    MemosNavGraph(
+                        isExpandedScreen,
+                        navController,
+                        openDrawer = { coroutineScope.launch { sizeAwareDrawerState.open() } },
+                        startDestination = MemosDestinations.HOME_ROUTE,
+                        navigationActions
+                    )
                 }
-
-                MemosNavGraph(
-                    isExpandedScreen,
-                    navController,
-                    openDrawer = { coroutineScope.launch { sizeAwareDrawerState.open() } },
-                    startDestination = startDestination
-                )
             }
         }
     }

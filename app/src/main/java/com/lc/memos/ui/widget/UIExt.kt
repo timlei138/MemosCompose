@@ -17,7 +17,13 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import coil.ImageLoader
+import coil.compose.AsyncImage
+import coil.compose.AsyncImagePainter
+import coil.compose.LocalImageLoader
 import kotlinx.coroutines.flow.SharingStarted
 
 private const val StopTimeoutMillis = 5000L
@@ -39,7 +45,10 @@ fun LoadingContent(
     } else {
         val pullRefreshState =
             rememberPullRefreshState(refreshing = loading, onRefresh = onRefresh)
-        Box(modifier.fillMaxSize().pullRefresh(pullRefreshState)) {
+        Box(
+            modifier
+                .fillMaxSize()
+                .pullRefresh(pullRefreshState)) {
             content()
         }
         PullRefreshIndicator(refreshing = loading, state = pullRefreshState,modifier.fillMaxWidth())
@@ -63,3 +72,7 @@ fun MemosSnackBarHost(
     )
 
 }
+
+
+@Composable
+fun dpTopx(db: Dp) = with(LocalDensity.current){ db.roundToPx()}

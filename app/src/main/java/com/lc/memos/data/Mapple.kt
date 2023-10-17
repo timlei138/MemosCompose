@@ -36,3 +36,20 @@ fun Memo.toLocal() = MemoInfo(
 )
 
 fun List<Memo>.toLocal() = map(Memo::toLocal)
+
+
+//fun MemoInfo.toNetWork() = Memo(
+//    id = noteId,
+//    content = content,
+//    createdTs = createdTs,
+//    updatedTs = updatedTs,
+//    rowStatus = rowStatus,
+//    creatorId = creatorId,
+//    creatorName = creatorName,
+//    creatorUsername = creatorUsername,
+//    displayTs = displayTs,
+//    visibility = visibility,
+//    pinned = pinned
+//)
+//
+//fun List<MemoInfo>.toNetwork() = map(MemoInfo::toNetWork)

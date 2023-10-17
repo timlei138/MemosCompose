@@ -1,5 +1,6 @@
 package com.lc.memos.data
 
+import android.util.Base64
 import com.google.gson.Gson
 import com.lc.memos.data.api.MemosApiServe
 import com.lc.memos.data.api.User
@@ -10,6 +11,7 @@ import com.lc.memos.di.ApplicationScope
 import com.lc.memos.di.DefaultDispatcher
 import com.lc.memos.util.AppSharedPrefs
 import com.lc.memos.data.api.Failed
+import com.lc.memos.data.api.Profile
 import com.lc.memos.data.api.Success
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -38,7 +40,10 @@ class DefaultDataRepository @Inject constructor(
             }
             when (response) {
                 is Success -> {
-                    AppSharedPrefs.appSettings.updateToken(response.data.openId)
+                    AppSharedPrefs.appSettings.apply {
+                        updateLoginInfo(host, user, pwd)
+                        updateUserInfo(response.data)
+                    }
                     Async.Success(response.data)
                 }
 
@@ -52,6 +57,34 @@ class DefaultDataRepository @Inject constructor(
         TODO("Not yet implemented")
     }
 
+    override fun getServiceState(): Flow<Profile> {
+        return flow {
+            val data = safeApiCall {
+                apiSource.status()
+            }
+            val version = when(data){
+                is Success -> {
+                    data.data.profile
+                }
+                is Failed -> Profile("","")
+            }
+            emit(version)
+
+        }
+    }
+
+    override fun getUserInfo(): Flow<User> {
+        return flow {
+            val user = AppSharedPrefs.appSettings.getUserInfo()
+            val byte = if (user.avatarUrl.isNotEmpty()){
+                Base64.decode(user.avatarUrl.split(",")[1],Base64.DEFAULT)
+            }else{
+                null
+            }
+            emit(user.copy(avatarIcon = byte, avatarUrl = ""))
+        }
+    }
+
     override fun getAllMemoList(): Flow<List<MemoInfo>> {
         return flow {
             val response = safeApiCall {
@@ -62,6 +95,26 @@ class DefaultDataRepository @Inject constructor(
                 is Failed -> emptyList()
             }
             emit(data)
+        }
+    }
+
+    override suspend fun refresh() {
+        withContext(dispatcher){
+            val response = safeApiCall {
+                apiSource.listMemo()
+            }
+
+            when(response){
+                is Success -> {
+                    localSource.deleteAll()
+
+                }
+                is Failed -> {
+
+                }
+            }
+
+
         }
     }
 
