@@ -26,6 +26,7 @@ coil = "2.2.2"
 retrofit = "2.9.0"
 okhttp3 = "4.9.1"
 gson = "2.8.2"
+markdown = "4.6.2"
 # @keep
 compileSdk = "33"
 compose-compiler = "1.4.0"
@@ -106,6 +107,9 @@ retrofit-android-converter = {module = "com.squareup.retrofit2:converter-gson",v
 okhttp3-logging = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "okhttp3" }
 okhttp3 = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp3" }
 gson = {module = "com.google.code.gson:gson",version.ref = "gson"}
+
+markdown-core = {module = "io.noties.markwon:core",version.ref="markdown"}
+markdown-edit = {module = "io.noties.markwon:editor",version.ref="markdown"}
 
 core-jdk-desugaring = { module = "com.android.tools:desugar_jdk_libs", version.ref = "jdkDesugar" }
 google-android-material = { module = "com.google.android.material:material", version.ref = "material" }

@@ -10,7 +10,7 @@ import kotlin.properties.Delegates
 class MemoApplication : Application() {
 
 
-    companion object{
+    companion object {
 
         var appContext by Delegates.notNull<Context>()
             private set
@@ -21,4 +21,5 @@ class MemoApplication : Application() {
         appContext = this
         Timber.plant(Timber.DebugTree())
     }
+
 }

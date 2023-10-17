@@ -73,6 +73,8 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.okhttp3.logging)
     implementation(libs.coil.kt.compose)
+    implementation(libs.markdown.core)
+    implementation(libs.markdown.edit)
 
     implementation(libs.androidx.lifecycle.runtimeCompose)
     implementation(libs.androidx.lifecycle.viewModelCompose)

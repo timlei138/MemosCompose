@@ -1,6 +1,6 @@
 package com.lc.memos.ui.home
 
-import androidx.compose.foundation.layout.Box
+import android.widget.TextView
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,7 +17,6 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lc.memos.data.db.MemoInfo
@@ -34,6 +34,8 @@ import com.lc.memos.ui.theme.MemosComposeTheme
 import com.lc.memos.ui.widget.LoadingContent
 import com.lc.memos.ui.widget.MemosAppBar
 import com.lc.memos.util.getTimeStampFormat
+import com.lc.memos.viewmodel.HomeViewModel
+import io.noties.markwon.Markwon
 
 @ExperimentalMaterial3Api
 @Composable
@@ -99,12 +101,20 @@ private fun HomeContent(
 
 @Composable
 private fun MemoInfoItem(memInfo: MemoInfo) {
-    Card(modifier = Modifier
-        .fillMaxWidth()
-        .padding(10.dp)) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp)
+    ) {
         Column(modifier = Modifier.padding(10.dp)) {
             Text(text = "${memInfo.createdTs.getTimeStampFormat()}", fontSize = 12.sp)
-            Text(text = memInfo.content,fontSize = 14.sp, modifier = Modifier.padding(0.dp,5.dp,0.dp,0.dp))
+            AndroidView(factory = { context ->
+                TextView(context).apply {
+                    val markwon = Markwon.create(context)
+                    markwon.setMarkdown(this, memInfo.content)
+                }
+
+            }, modifier = Modifier.padding(0.dp, 5.dp, 0.dp, 0.dp))
         }
 
     }

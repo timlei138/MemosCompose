@@ -1,4 +1,4 @@
-package com.lc.memos.ui.home
+package com.lc.memos.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -57,6 +57,7 @@ class HomeViewModel @Inject constructor(private val repository: DataRepository) 
         Timber.d("refresh.....")
         _isLoading.value = true
         viewModelScope.launch {
+            repository.refresh()
             _isLoading.value = false
         }
     }

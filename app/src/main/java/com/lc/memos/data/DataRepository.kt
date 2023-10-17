@@ -1,5 +1,6 @@
 package com.lc.memos.data
 
+import com.lc.memos.data.api.Profile
 import com.lc.memos.data.api.User
 import com.lc.memos.data.db.MemoInfo
 import kotlinx.coroutines.flow.Flow
@@ -11,6 +12,11 @@ interface DataRepository {
 
     fun signInSSO(host: String,openApi: String)
 
+    fun getServiceState(): Flow<Profile>
+    fun getUserInfo(): Flow<User>
+
     fun getAllMemoList(): Flow<List<MemoInfo>>
+
+    suspend fun refresh()
 
 }

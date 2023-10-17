@@ -1,26 +1,16 @@
 package com.lc.memos.ui
 
-import android.widget.Toast
-import androidx.compose.material3.DrawerState
-import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.rememberDrawerState
+import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.currentCompositionLocalContext
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.lc.memos.ui.home.HomeScreen
 import com.lc.memos.ui.login.LoginScreen
-import com.lc.memos.ui.widget.MemosDestinations
-import com.lc.memos.ui.widget.MemosNavigationActions
-import kotlinx.coroutines.CoroutineScope
+import com.lc.memos.ui.login.SettingScreen
 import timber.log.Timber
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -30,19 +20,20 @@ fun MemosNavGraph(
     navController: NavHostController = rememberNavController(),
     openDrawer: () -> Unit = {},
     startDestination: String = MemosDestinations.LOGIN_ROUTE,
+    navigationActions: MemosNavigationActions,
     modifier: Modifier = Modifier,
 ) {
 
     NavHost(navController = navController, startDestination = startDestination,modifier = modifier){
 
-        composable(MemosDestinations.LOGIN_ROUTE,arguments = listOf()){ navBackStackEntry ->
-            LoginScreen(onSigned = {
-                Timber.d("user login success")
-            })
-        }
-
         composable(MemosDestinations.HOME_ROUTE, arguments = listOf()){ navBackStackEntry ->
             HomeScreen(isExpandedScreen, openDrawer)
+        }
+
+        composable(MemosDestinations.SETTING_ROUTE){
+            SettingScreen(signOut = {
+                navigationActions.navigateToLogin()
+            })
         }
     }
 

@@ -5,6 +5,7 @@ import androidx.room.Dao
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.Query
+import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 
 
@@ -51,5 +52,14 @@ interface MemoDao {
 
     @Query("SELECT * FROM media WHERE creatorId=:creatorId AND noteId=:memoId")
     fun getResourceForMemo(creatorId: Long,memoId: Long): Flow<List<MemoResource>>
+
+    @Query("DELETE FROM MEMOS")
+    suspend fun deleteAll()
+
+    @Query("DELETE FROM media")
+    suspend fun deleteMediaAll()
+
+    @Upsert
+    suspend fun upSertMemo(memoInfo: List<MemoInfo>)
 
 }
