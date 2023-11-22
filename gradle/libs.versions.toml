@@ -15,12 +15,13 @@ androidx-lifecycle-compose = "2.6.1"
 androidx-lifecycle-runtime-compose = "2.6.1"
 androidx-navigation = "2.5.3"
 androidx-palette = "1.0.0"
+androidx-datastore = '1.0.0'
 androidx-test = "1.5.0"
 androidx-test-espresso = "3.5.1"
 androidx-test-ext-junit = "1.1.5"
 androidx-test-ext-truth = "1.5.0"
 androidx-window = "1.2.0-alpha03"
-androidxHiltNavigationCompose = "1.0.0"
+androidx-hilt-navigation-compose = "1.0.0"
 androidx-test-uiautomator = "2.2.0"
 coil = "2.2.2"
 retrofit = "2.9.0"
@@ -29,35 +30,31 @@ gson = "2.8.2"
 markdown = "4.6.2"
 # @keep
 compileSdk = "33"
-compose-compiler = "1.4.0"
+compose-compiler = "1.5.4"
 coroutines = "1.7.2"
 gradle-versions = "0.47.0"
-hilt = "2.44"
+hilt = "2.48.1"
 # @pin When updating to AGP 7.4.0-alpha10 and up we can update this https://developer.android.com/studio/write/java8-support#library-desugaring-versions
 jdkDesugar = "1.2.2"
 junit = "4.13.2"
 # @pin Update in conjuction with Compose Compiler
-kotlin = "1.8.10"
+kotlin = "1.9.20"
+kotlin-serialization = "1.6.1"
 kotlinx_immutable = "0.3.5"
-ksp = "1.8.10-1.0.9"
+ksp = "1.9.20-1.0.14"
 material = "1.9.0"
 # @keep
-minSdk = "24"
+minSdk = "26"
 timber = "5.0.1"
-robolectric = "4.9.2"
-rome = "1.18.0"
 room = "2.5.0"
 # @keep
 targetSdk = "33"
 version-catalog-update = "0.8.0"
+core-ktx = "1.9.0"
 
 [libraries]
-accompanist-adaptive = { module = "com.google.accompanist:accompanist-adaptive", version.ref = "accompanist" }
-accompanist-flowlayout = { module = "com.google.accompanist:accompanist-flowlayout", version.ref = "accompanist" }
-accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanist" }
+#accompanist-adaptive = { module = "com.google.accompanist:accompanist-adaptive", version.ref = "accompanist" }
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }
-accompanist-swiperefresh = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanist" }
-accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity-compose" }
 androidx-activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "androidx-activity-compose" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidx-appcompat" }
@@ -100,6 +97,8 @@ androidx-test-rules = { module = "androidx.test:rules", version.ref = "androidx-
 androidx-test-runner = "androidx.test:runner:1.5.2"
 androidx-test-uiautomator = { module = "androidx.test.uiautomator:uiautomator", version.ref = "androidx-test-uiautomator" }
 androidx-window = { module = "androidx.window:window", version.ref = "androidx-window" }
+androidx-datastore = {module = "androidx.datastore:datastore-preferences",version.ref="androidx-datastore"}
+
 coil-kt-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 
 retrofit-android = {module = "com.squareup.retrofit2:retrofit",version.ref = "retrofit"}
@@ -116,16 +115,15 @@ google-android-material = { module = "com.google.android.material:material", ver
 
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
-androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "androidxHiltNavigationCompose" }
+androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "androidx-hilt-navigation-compose" }
 
 junit = { module = "junit:junit", version.ref = "junit" }
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk8", version.ref = "kotlin" }
 kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinx_immutable" }
+kotlinx-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlin-serialization" }
 
-robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
-rometools-modules = { module = "com.rometools:rome-modules", version.ref = "rome" }
-rometools-rome = { module = "com.rometools:rome", version.ref = "rome" }
 timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
+core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
@@ -137,3 +135,4 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 version-catalog-update = { id = "nl.littlerobots.version-catalog-update", version.ref = "version-catalog-update" }
+com-android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }

@@ -16,4 +16,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "MemosCompose"
 include(":app")
- 
+include(":cookieStore")
+include(":miniRequest")

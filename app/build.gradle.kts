@@ -1,3 +1,4 @@
+@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -44,7 +45,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.3"
+        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
     }
     packaging {
         resources {
@@ -60,11 +61,13 @@ dependencies {
     implementation(libs.androidx.activity.ktx)
     implementation(libs.timber)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.accompanist.permissions)
 
 
     //Architecture Components
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
+
     ksp(libs.androidx.room.compiler)
 
     implementation(libs.retrofit.android)
@@ -96,7 +99,12 @@ dependencies {
     implementation(libs.androidx.compose.materialWindow)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.datastore)
+    implementation(libs.kotlinx.serialization)
 
+    //Model
+    implementation(project(mapOf("path" to ":cookieStore")))
+    implementation(project(mapOf("path" to ":miniRequest")))
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
