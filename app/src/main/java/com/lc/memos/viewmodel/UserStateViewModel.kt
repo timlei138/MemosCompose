@@ -1,21 +1,26 @@
 package com.lc.memos.viewmodel
 
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lc.memos.data.Async
-import com.lc.memos.data.DataRepository
-import com.lc.memos.data.api.Profile
-import com.lc.memos.data.api.User
-import com.lc.memos.ui.widget.WhileUISubscribed
+import com.lc.memos.data.User
+import com.lc.memos.data.UserRepository
+import com.lc.memos.di.DefaultDispatcher
+import com.lc.memos.ui.WhileUISubscribed
+import com.lc.mini.call.ApiResponse
+import com.lc.mini.call.messageOrNull
+import com.lc.mini.call.suspendOnSuccess
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -27,23 +32,28 @@ enum class SignMethod {
 data class LoginUiState(
     val loading: Boolean = false,
     val msg: String? = null,
-    val user: User? = null
+    val success: Boolean = false
 )
 
-data class UserState(val user: User? = null,val profile: Profile? = null)
-
 @HiltViewModel
-class UserStateViewModel @Inject constructor(private val repository: DataRepository) : ViewModel() {
+class UserStateViewModel @Inject constructor(
+    @DefaultDispatcher private val dispatcher: CoroutineDispatcher,
+    private val repository: UserRepository
+) : ViewModel() {
 
+    var currUser: User? by mutableStateOf(User())
 
     private val _uiState = MutableStateFlow(LoginUiState())
+
     val loginUiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
 
-    private val _userState = combine(repository.getUserInfo(),repository.getServiceState()){ user,service ->
-        UserState(user,service)
-    }.stateIn(scope = viewModelScope, WhileUISubscribed, initialValue = UserState())
 
-    val userState = _userState
+    suspend fun loadCurrentUser(): ApiResponse<User> = withContext(dispatcher){
+        Timber.d("loadCurrentUser")
+        repository.me().suspendOnSuccess {
+            currUser = data
+        }
+    }
 
     fun signIn(host: String, user: String, pwd: String) {
         if (host.isEmpty() || user.isEmpty() || pwd.isEmpty()) {
@@ -52,18 +62,15 @@ class UserStateViewModel @Inject constructor(private val repository: DataReposit
         }
         viewModelScope.launch {
             _uiState.update { it.copy(loading = true, msg = "") }
-            val result = repository.signIn(host, user, pwd)
-            //Timber.d("result-> $result")
-            when (result) {
-                is Async.Success -> {
-                    _uiState.update { it.copy(loading = false, user = result.data) }
-                    Timber.d("user==>${result.data}")
+            when (val result = repository.signInWithPassword(host, user, pwd)) {
+                is ApiResponse.Success -> {
+                    _uiState.update { it.copy(loading = false, success = true) }
+                    currUser = result.data
                 }
-
-                is Async.Error -> _uiState.update {
+                is ApiResponse.Failure -> _uiState.update {
                     it.copy(
                         loading = false,
-                        msg = result.errorMsg
+                        msg = result.messageOrNull
                     )
                 }
 
@@ -77,8 +84,9 @@ class UserStateViewModel @Inject constructor(private val repository: DataReposit
     }
 
 
-
     fun signOut() {
 
     }
 }
+
+val localUserState = compositionLocalOf<UserStateViewModel> { error("No Active User") }

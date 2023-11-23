@@ -8,10 +8,7 @@ import kotlin.properties.Delegates
 
 @HiltAndroidApp
 class MemoApplication : Application() {
-
-
     companion object {
-
         var appContext by Delegates.notNull<Context>()
             private set
     }

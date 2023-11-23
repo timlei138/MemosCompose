@@ -26,17 +26,18 @@ private object MemosScreens{
 }
 
 object MemosDestinations{
-    const val HOME_ROUTE = HOME_SCREEN
-    const val EXPLORE_ROUTE = EXPLORE_SCREEN
-    const val RESOURCE_ROUTE = RESOURCE_SCREEN
-    const val COLLECT_ROUTE = COLLECT_SCREEN
-    const val SETTING_ROUTE = SETTING_SCREEN
-    const val LOGIN_ROUTE = LOGIN_SCREEN
+    const val ROUTE_HOME = HOME_SCREEN
+    const val ROUTE_EXPLORE = EXPLORE_SCREEN
+    const val ROUTE_RESOURCE = RESOURCE_SCREEN
+    const val ROUTE_COLLECT = COLLECT_SCREEN
+    const val ROUTE_SETTING = SETTING_SCREEN
+    const val ROUTE_LOGIN = LOGIN_SCREEN
 }
 
 class MemosNavigationActions(private val navController: NavHostController){
 
     fun navigateToHome(){
+        navController.popBackStack()
         navController.navigate(HOME_SCREEN){
             popUpTo(navController.graph.findStartDestination().id)
             launchSingleTop = true

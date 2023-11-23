@@ -1,18 +1,31 @@
 package com.lc.memos.data.api
 
+import com.lc.memos.data.Status
+import com.lc.memos.data.User
+import com.lc.memos.data.db.MemosNote
+import com.lc.mini.call.ApiResponse
 import okhttp3.Interceptor
-import okhttp3.OkHttp
 import okhttp3.RequestBody
 import okhttp3.Response
-import org.json.JSONObject
-import retrofit2.HttpException
+
 import retrofit2.http.Body
 import retrofit2.http.GET
-import retrofit2.http.HeaderMap
-import retrofit2.http.Headers
+
 import retrofit2.http.POST
 import retrofit2.http.Query
 
+
+data class Resource(
+    val createdTs: Int,
+    val creatorId: Int,
+    val externalLink: String,
+    val filename: String,
+    val id: Int,
+    val linkedMemoAmount: Int,
+    val size: Int,
+    val type: String,
+    val updatedTs: Int
+)
 
 enum class MemoRowState(val state: String) {
     VISIBILITY("NORMAL"),
@@ -23,16 +36,9 @@ enum class MemoVisibility(val state: String) {
     PRIVATE("PRIVATE"), PROTECTED("PROTECTED"), PUBLIC("PUBLIC")
 }
 
-private val HEADERS = mapOf(
-    "Accept" to "application/json",
-    "Authorization" to "Bearer eyJhbGciOiJIUzI1NiIsImtpZCI6InYxIiwidHlwIjoiSldUIn0.eyJuYW1lIjoic3RvbmVzbGMiLCJpc3MiOiJtZW1vcyIsInN1YiI6IjEiLCJhdWQiOlsidXNlci5hY2Nlc3MtdG9rZW4iXSwiaWF0IjoxNjk1MTk0OTE0fQ.qW3n_aCgIJThaP35lzNvHHTiZDPJp7Ztm682LO1jtVc"
-)
-
-
 class MemosApiInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val original = chain.request()
-
         val request = original.newBuilder().let {
             it.method(original.method, original.body)
 //            it.headers(
@@ -46,34 +52,9 @@ class MemosApiInterceptor : Interceptor {
         return chain.proceed(request)
 
     }
-
 }
 
-suspend fun <T> safeApiCall(block: suspend () -> ApiResponse<out T>): ApiResponse<out T> {
-    try {
-        return block.invoke()
-    } catch (e: Exception) {
-        if (e is HttpException) {
-            val responseError = isServiceJson(e.response()?.errorBody()?.string())
-            val msg = if (responseError.isEmpty()) e.message() else responseError
-            return ApiResponse.create(e.code(), msg)
-        }
-        return ApiResponse.create(-1, e.message)
-    }
-}
-
-
-private fun isServiceJson(response: String?): String {
-    if (response.isNullOrEmpty()) return ""
-    try {
-        val json = JSONObject(response)
-        return json.getString("error")
-    } catch (e: Exception) {
-        return ""
-    }
-}
-
-interface MemosApiServe {
+interface MemosApi {
 
     @POST("/api/v1/auth/signin")
     suspend fun signIn(@Body body: RequestBody): ApiResponse<User>
@@ -84,27 +65,26 @@ interface MemosApiServe {
     @GET("/api/v1/status")
     suspend fun status(): ApiResponse<Status>
 
-//
-//    @POST("/api/v1/auth/signout")
-//    suspend fun logout(): ApiResponse<Unit>
-//
-//    @GET("/api/v1/user/me")
-//    suspend fun me(): ApiResponse<User>
+    @GET("/api/v1/user/me")
+    suspend fun me(): ApiResponse<User>
 
+    @POST("/api/v1/auth/signout")
+    suspend fun logout(): ApiResponse<Unit>
 
     @GET("/api/v1/memo")
-    suspend fun listMemo(
+    suspend fun listAllMemos(
         @Query("creatorId") creatorId: Long? = null,
         @Query("rowStatus") rowStatus: MemoRowState? = null,
         @Query("visibility") visibility: MemoVisibility? = null,
-        @HeaderMap headers: Map<String, String> = HEADERS
-    ): ApiResponse<List<Memo>>
+    ): ApiResponse<List<MemosNote>>
+
+
+    @GET("/api/v1/tag")
+    suspend fun getTags(@Query("creatorId") creatorId: Long? = null): ApiResponse<List<String>>
 
 //    @POST("/api/v1/memo")
 //    suspend fun createMemo(@Body body: CreateMemoInput): ApiResponse<Memo>
 //
-//    @GET("/api/v1/tag")
-//    suspend fun getTags(@Query("creatorId") creatorId: Long? = null): ApiResponse<List<String>>
 //
 //    @POST("/api/v1/tag")
 //    suspend fun updateTag(@Body body: UpdateTagInput): ApiResponse<String>
