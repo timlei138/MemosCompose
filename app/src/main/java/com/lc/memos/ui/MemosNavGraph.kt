@@ -9,6 +9,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.lc.memos.ui.page.home.HomeScreen
+import com.lc.memos.ui.page.login.LoginScreen
+import com.lc.memos.ui.page.settings.SettingsScreen
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -18,15 +20,24 @@ fun MemosNavGraph(
     navigationControl: NavHostController = rememberNavController(),
     openDrawer: () -> Unit = {},
     startDestination: String = MemosDestinations.ROUTE_HOME,
+    loginSuccess: () -> Unit,
 ) {
 
     NavHost(navController = navigationControl, startDestination = startDestination) {
         composable(MemosDestinations.ROUTE_HOME) {
-            HomeScreen(openDrawer = { openDrawer })
+            HomeScreen(openDrawer = { openDrawer() })
         }
 
         composable(MemosDestinations.ROUTE_EXPLORE) {
 
+        }
+
+        composable(MemosDestinations.ROUTE_LOGIN) {
+            LoginScreen { loginSuccess() }
+        }
+
+        composable(MemosDestinations.ROUTE_SETTING){
+            SettingsScreen(navigationControl)
         }
     }
 }

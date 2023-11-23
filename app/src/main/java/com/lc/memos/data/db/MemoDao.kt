@@ -19,7 +19,7 @@ data class MemosNote(
     var updatedTs: Int = 0,
     var visibility: String = "",
     var content: String = "",
-    var createdTs: Int = 0,
+    var createdTs: Long = 0,
     var creatorId: Long = 0,
     var creatorName: String = "",
     var creatorUsername: String = "",

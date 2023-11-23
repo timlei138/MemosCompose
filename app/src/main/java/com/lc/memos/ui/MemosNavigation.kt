@@ -58,7 +58,10 @@ class MemosNavigationActions(private val navController: NavHostController){
     }
 
     fun navigateToSetting(){
-        navController.navigate(SETTING_SCREEN)
+        navController.navigate(SETTING_SCREEN){
+            launchSingleTop = true
+            restoreState = true
+        }
     }
 
     fun navigateToLogin(){

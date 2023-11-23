@@ -110,7 +110,7 @@ private fun MemoInfoItem(memInfo: MemosNote) {
             .padding(10.dp)
     ) {
         Column(modifier = Modifier.padding(10.dp)) {
-            Text(text = "${memInfo.createdTs.getTimeStampFormat()}", fontSize = 12.sp)
+            Text(text = "${memInfo.createdTs.toInt().getTimeStampFormat()}", fontSize = 12.sp)
             AndroidView(factory = { context ->
                 TextView(context).apply {
                     val markwon = Markwon.create(context)

@@ -3,7 +3,6 @@ package com.lc.memos.viewmodel
 import androidx.compose.runtime.compositionLocalOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lc.memos.data.DailyUsageStat
 import com.lc.memos.data.db.MemosNote
 import com.lc.memos.data.repository.DefaultMemosRepository
 import com.lc.memos.ui.WhileUISubscribed
@@ -23,7 +22,6 @@ data class HomeUiState(
     val items: List<MemosNote> = emptyList(),
     val isLoading: Boolean = false,
     val queryParams: String? = "",
-    val dayUsage: List<DailyUsageStat> = emptyList(),
     val tags: List<String> = emptyList(),
     val msg: String? = null
 )
@@ -35,7 +33,6 @@ class MemosViewModel @Inject constructor(private val repository: DefaultMemosRep
 
     private val _isLoading = MutableStateFlow(false)
 
-    private val dayUsage = MutableStateFlow(DailyUsageStat.initMatrix)
 
     private val _filterAsync =
         combine(repository.listAllMemos(), _queryFilter) { memos, filter ->
@@ -44,9 +41,9 @@ class MemosViewModel @Inject constructor(private val repository: DefaultMemosRep
 
 
     val uiState: StateFlow<HomeUiState> =
-        combine(_isLoading, _filterAsync,dayUsage,repository.listAllTags()) { isLoading, asyncMemos,dayUsage,tags ->
+        combine(_isLoading, _filterAsync,repository.listAllTags()) { isLoading, asyncMemos,tags ->
             Timber.d("asyncMemos $tags")
-            HomeUiState(isLoading = false, items = asyncMemos,dayUsage = dayUsage, tags = tags.getOrElse(emptyList()
+            HomeUiState(isLoading = false, items = asyncMemos, tags = tags.getOrElse(emptyList()
             ))
         }.stateIn(viewModelScope, WhileUISubscribed, initialValue = HomeUiState(isLoading = true))
 

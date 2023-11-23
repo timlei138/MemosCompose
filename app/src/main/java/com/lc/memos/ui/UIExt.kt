@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.SharingStarted
@@ -72,3 +73,9 @@ fun MemosSnackBarHost(
 
 @Composable
 fun dpTopx(db: Dp) = with(LocalDensity.current){ db.roundToPx()}
+
+
+@Composable
+fun Int.string(): String{
+    return stringResource(id = this)
+}

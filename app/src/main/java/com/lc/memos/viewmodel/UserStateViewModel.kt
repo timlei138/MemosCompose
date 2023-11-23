@@ -89,4 +89,4 @@ class UserStateViewModel @Inject constructor(
     }
 }
 
-val localUserState = compositionLocalOf<UserStateViewModel> { error("No Active User") }
+val localUserModel = compositionLocalOf<UserStateViewModel> { error("No Active User") }
