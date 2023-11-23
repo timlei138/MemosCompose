@@ -71,13 +71,4 @@ object MemoDatabaseModel {
             it.build()
         }
     }
-
-
-//    @Singleton
-//    @Provides
-//    fun providerMemoApiServe(okHttpClient: OkHttpClient): MemosApiServe {
-//        return Retrofit.Builder().baseUrl("http://82.156.120.42:8090").client(okHttpClient)
-//            .addConverterFactory(ApiGsonConverterFactory.create()).build()
-//            .create(MemosApiServe::class.java)
-//    }
 }

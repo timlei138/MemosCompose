@@ -43,7 +43,6 @@ import timber.log.Timber
 @ExperimentalMaterial3Api
 @Composable
 fun HomeScreen(
-    isExpandedScreen: Boolean,
     openDrawer: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: MemosViewModel = localMemosViewModel.current,

@@ -4,12 +4,15 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -39,37 +42,47 @@ fun MemosApp(widthSizeClass: WindowWidthSizeClass) {
 
     val sizeAwareDrawerState = rememberSizeAwareDrawerState(isExpandedScreen = isExpandedScreen)
 
+    var userValid by remember { mutableStateOf(true) }
 
     val userModel: UserStateViewModel = hiltViewModel()
     val memosModel: MemosViewModel = hiltViewModel()
 
     MemosComposeTheme {
 
-        Row {
-            if (isExpandedScreen) {
 
-            }
 
-            CompositionLocalProvider(
-                localUserState provides userModel,
-                localMemosViewModel provides memosModel
-            ) {
+        ModalNavigationDrawer(drawerContent = {
+            AppDrawer(
+                currentRoute = currentRoute,
+                navigateToHome = { /*TODO*/ },
+                navigateToExplore = { /*TODO*/ },
+                navigateToResource = { /*TODO*/ },
+                navigateToCollect = { /*TODO*/ },
+                navigateToSetting = { /*TODO*/ },
+                closeDrawer = { /*TODO*/ })
+        }, drawerState = sizeAwareDrawerState, gesturesEnabled = userValid || !isExpandedScreen) {
 
-                AppNavGraph(
-                    isExpandedScreen,
-                    navController,
+            Row {
+                if (isExpandedScreen) {
+
+                }
+
+                MemosNavGraph(
+                    drawerState = sizeAwareDrawerState,
+                    navigationControl = navController,
                     openDrawer = { coroutineScope.launch { sizeAwareDrawerState.open() } },
                     startDestination = currentRoute,
                 )
-
             }
 
         }
+
     }
 
     LaunchedEffect(Unit) {
         userModel.loadCurrentUser().suspendOnNotLogin {
             if (navController.currentDestination?.route != MemosDestinations.ROUTE_LOGIN) {
+                userValid = false
                 navController.navigate(MemosDestinations.ROUTE_LOGIN) {
                     popUpTo(navController.graph.startDestinationId) {
                         inclusive = true
