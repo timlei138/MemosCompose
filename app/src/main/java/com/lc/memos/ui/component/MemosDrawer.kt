@@ -51,8 +51,6 @@ fun AppDrawer(
 
     val viewModel = localMemosViewModel.current.uiState.collectAsStateWithLifecycle()
 
-    Timber.d("MemosViewModel=>1 $viewModel")
-
     ModalDrawerSheet(modifier) {
 
         MemosStat(localUserModel.current.currUser, viewModel.value.items, viewModel.value.tags)
@@ -160,6 +158,7 @@ fun AppDrawer(
             },
             selected = currentRoute == MemosDestinations.ROUTE_SETTING,
             onClick = {
+                Timber.d("click...")
                 navigateToSetting()
                 closeDrawer()
             },

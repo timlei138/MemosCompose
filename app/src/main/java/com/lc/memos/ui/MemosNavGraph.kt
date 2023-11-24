@@ -11,6 +11,7 @@ import androidx.navigation.compose.rememberNavController
 import com.lc.memos.ui.page.home.HomeScreen
 import com.lc.memos.ui.page.login.LoginScreen
 import com.lc.memos.ui.page.settings.SettingsScreen
+import timber.log.Timber
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -19,13 +20,13 @@ fun MemosNavGraph(
     drawerState: DrawerState,
     navigationControl: NavHostController = rememberNavController(),
     openDrawer: () -> Unit = {},
-    startDestination: String = MemosDestinations.ROUTE_HOME,
     loginSuccess: () -> Unit,
+    startDestination: String = MemosDestinations.ROUTE_HOME,
 ) {
 
     NavHost(navController = navigationControl, startDestination = startDestination) {
         composable(MemosDestinations.ROUTE_HOME) {
-            HomeScreen(openDrawer = { openDrawer() })
+            HomeScreen(openDrawer = openDrawer )
         }
 
         composable(MemosDestinations.ROUTE_EXPLORE) {
@@ -33,11 +34,17 @@ fun MemosNavGraph(
         }
 
         composable(MemosDestinations.ROUTE_LOGIN) {
-            LoginScreen { loginSuccess() }
+            LoginScreen(loginSuccess = loginSuccess)
         }
 
         composable(MemosDestinations.ROUTE_SETTING){
-            SettingsScreen(navigationControl)
+            SettingsScreen({
+                Timber.d("backQueue=>${navigationControl.backQueue.size}")
+                navigationControl.backQueue.forEach {
+                    Timber.d("${it.id} ${it.destination.route} $it")
+                }
+                navigationControl.popBackStack()
+            })
         }
     }
 }

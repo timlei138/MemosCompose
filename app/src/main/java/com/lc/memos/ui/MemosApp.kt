@@ -26,6 +26,7 @@ import com.lc.memos.viewmodel.UserStateViewModel
 import com.lc.memos.viewmodel.localMemosViewModel
 import com.lc.memos.viewmodel.localUserModel
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -53,6 +54,8 @@ fun MemosApp(widthSizeClass: WindowWidthSizeClass) {
     val userModel: UserStateViewModel = hiltViewModel()
 
     val memosModel: MemosViewModel = hiltViewModel()
+
+    Timber.d("currentRoute $currentRoute")
 
     MemosComposeTheme {
 
@@ -86,14 +89,9 @@ fun MemosApp(widthSizeClass: WindowWidthSizeClass) {
                         drawerState = sizeAwareDrawerState,
                         navigationControl = navController,
                         openDrawer = { coroutineScope.launch { sizeAwareDrawerState.open() } },
-                        startDestination = currentRoute,
                         loginSuccess = {
                             userValid = true
-                            navController.navigate(MemosDestinations.ROUTE_HOME){
-                                popUpTo(navController.graph.startDestinationId){
-                                    inclusive = true
-                                }
-                            }
+                            navigationActions.navigateToHome()
                         }
                     )
                 }
@@ -102,15 +100,12 @@ fun MemosApp(widthSizeClass: WindowWidthSizeClass) {
 
         }
 
+
         LaunchedEffect(Unit) {
             userModel.loadCurrentUser().suspendOnNotLogin {
                 if (navController.currentDestination?.route != MemosDestinations.ROUTE_LOGIN) {
                     userValid = false
-                    navController.navigate(MemosDestinations.ROUTE_LOGIN) {
-                        popUpTo(navController.graph.startDestinationId) {
-                            inclusive = true
-                        }
-                    }
+                    navigationActions.navigateToLogin()
                 }
             }
         }

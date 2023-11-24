@@ -64,7 +64,7 @@ private var loginMethod by mutableStateOf(SignMethod.USERNAME_AND_PASSWORD)
 fun LoginScreen(
     viewModel: UserStateViewModel = hiltViewModel(),
     scaffoldState: ScaffoldState = rememberScaffoldState(),
-    loginSuccess: ()->Unit
+    loginSuccess: ()-> Unit
 ) {
 
     var menuExpanded by remember { mutableStateOf(false) }

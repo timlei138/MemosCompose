@@ -8,6 +8,7 @@ import com.lc.memos.ui.MemosScreens.HOME_SCREEN
 import com.lc.memos.ui.MemosScreens.LOGIN_SCREEN
 import com.lc.memos.ui.MemosScreens.RESOURCE_SCREEN
 import com.lc.memos.ui.MemosScreens.SETTING_SCREEN
+import timber.log.Timber
 
 
 private object MemosScreens{
@@ -37,9 +38,8 @@ object MemosDestinations{
 class MemosNavigationActions(private val navController: NavHostController){
 
     fun navigateToHome(){
-        navController.popBackStack()
         navController.navigate(HOME_SCREEN){
-            popUpTo(navController.graph.findStartDestination().id)
+            popUpTo(navController.graph.startDestinationId)
             launchSingleTop = true
             restoreState = true
         }
@@ -58,6 +58,7 @@ class MemosNavigationActions(private val navController: NavHostController){
     }
 
     fun navigateToSetting(){
+        Timber.d("navigateToSetting")
         navController.navigate(SETTING_SCREEN){
             launchSingleTop = true
             restoreState = true
@@ -65,7 +66,11 @@ class MemosNavigationActions(private val navController: NavHostController){
     }
 
     fun navigateToLogin(){
-        navController.navigate(LOGIN_SCREEN)
+        navController.navigate(MemosDestinations.ROUTE_LOGIN) {
+            popUpTo(navController.graph.startDestinationId) {
+                inclusive = true
+            }
+        }
     }
 
 }

@@ -2,6 +2,7 @@ package com.lc.memos.data.repository
 
 import android.content.Context
 import com.google.gson.Gson
+import com.lc.memos.data.Status
 import com.lc.memos.data.User
 import com.lc.memos.data.UserRepository
 import com.lc.memos.data.api.MemosApiService
@@ -55,6 +56,9 @@ class DefaultUserStatRepository @Inject constructor(
     }
 
     override suspend fun me(): ApiResponse<User> = apiService.call { api ->  api.me() }
+    override fun status(): Status? {
+        return apiService.status
+    }
 
 
 }

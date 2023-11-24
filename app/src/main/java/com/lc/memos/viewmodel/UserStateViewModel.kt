@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lc.memos.data.Status
 import com.lc.memos.data.User
 import com.lc.memos.data.UserRepository
 import com.lc.memos.di.DefaultDispatcher
@@ -42,6 +43,8 @@ class UserStateViewModel @Inject constructor(
 ) : ViewModel() {
 
     var currUser: User? by mutableStateOf(User())
+
+    val status: Status? get() = repository.status()
 
     private val _uiState = MutableStateFlow(LoginUiState())
 

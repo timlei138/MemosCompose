@@ -19,12 +19,12 @@ data class User(
 
 @Keep
 data class Status(
-    val profile: Profile,
+    val profile: Profile?,
 )
 
 data class Profile(
-    val mode: String,
-    val version: String
+    val mode: String? = "",
+    val version: String? = ""
 )
 
 
@@ -37,4 +37,6 @@ interface UserRepository {
     fun logout()
 
     suspend fun me(): ApiResponse<User>
+
+    fun status(): Status?
 }
