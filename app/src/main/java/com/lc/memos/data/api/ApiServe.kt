@@ -1,5 +1,6 @@
 package com.lc.memos.data.api
 
+import android.net.Uri
 import com.lc.memos.data.Status
 import com.lc.memos.data.User
 import com.lc.memos.data.db.MemosNote
@@ -25,7 +26,23 @@ data class Resource(
     val size: Int,
     val type: String,
     val updatedTs: Int
-)
+) {
+    fun toFileUri(host: String): Uri {
+        if (externalLink.isNotEmpty()) {
+            return Uri.parse(externalLink)
+        }
+        return Uri.parse(host).buildUpon().appendPath("o").appendPath("r").appendPath(id.toString())
+            .appendPath(filename).build()
+    }
+
+    fun toThumbnailFileUri(host: String,size: Int = 1): Uri {
+        if (externalLink.isNotEmpty()) {
+            return Uri.parse(externalLink)
+        }
+        return Uri.parse(host).buildUpon().appendPath("o").appendPath("r").appendPath(id.toString())
+            .appendQueryParameter("thumbnail","$size").build()
+    }
+}
 
 enum class MemoRowState(val state: String) {
     VISIBILITY("NORMAL"),
@@ -82,7 +99,7 @@ interface MemosApi {
     @GET("/api/v1/tag")
     suspend fun getTags(@Query("creatorId") creatorId: Long? = null): ApiResponse<List<String>>
 
-//    @POST("/api/v1/memo")
+    //    @POST("/api/v1/memo")
 //    suspend fun createMemo(@Body body: CreateMemoInput): ApiResponse<Memo>
 //
 //
@@ -98,8 +115,8 @@ interface MemosApi {
 //    @DELETE("/api/v1/memo/{id}")
 //    suspend fun deleteMemo(@Path("id") memoId: Long): ApiResponse<Unit>
 //
-//    @GET("/api/v1/resource")
-//    suspend fun getResources(): ApiResponse<List<Resource>>
+    @GET("/api/v1/resource")
+    suspend fun getResources(): ApiResponse<List<Resource>>
 //
 //    @Multipart
 //    @POST("/api/v1/resource/blob")

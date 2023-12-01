@@ -1,6 +1,5 @@
 package com.lc.memos.ui.page.settings
 
-import android.app.usage.UsageStats
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -54,7 +53,6 @@ import com.lc.memos.viewmodel.UserStateViewModel
 import com.lc.memos.viewmodel.localUserModel
 import com.lc.mini.call.suspendOnSuccess
 import timber.log.Timber
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
@@ -94,13 +92,11 @@ fun SettingsScreen(
                         rememberAsyncImagePainter(
                             model = ImageRequest.Builder(
                                 LocalContext.current
-                            ).data(user!!.avatarUrl.replace("data:image/webp;base64,","")).size(dpTopx(64.dp))
+                            ).data(user?.avatarIcon).size(dpTopx(64.dp))
                                 .transformations(CircleCropTransformation()).build()
                         )
 
                     }
-
-                    Timber.d("avatar ${user?.avatarUrl}")
 
                     Image(
                         painter = painter,

@@ -76,8 +76,12 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.okhttp3.logging)
     implementation(libs.coil.kt.compose)
+    //https://noties.io/Markwon/docs/v4/ext-tasklist/#task-list-mutation
     implementation(libs.markdown.core)
     implementation(libs.markdown.edit)
+    implementation(libs.markdown.html)
+    implementation(libs.markdown.image.coil)
+    implementation(libs.markdown.task.list)
 
     implementation(libs.androidx.lifecycle.runtimeCompose)
     implementation(libs.androidx.lifecycle.viewModelCompose)

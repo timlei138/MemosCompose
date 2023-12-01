@@ -27,31 +27,6 @@ private const val StopTimeoutMillis = 5000L
 
 val WhileUISubscribed: SharingStarted = SharingStarted.WhileSubscribed(StopTimeoutMillis)
 
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-fun LoadingContent(
-    loading: Boolean,
-    empty: Boolean,
-    emptyContent: @Composable () -> Unit,
-    onRefresh: () -> Unit,
-    modifier: Modifier = Modifier,
-    content: @Composable () -> Unit
-) {
-    if (empty) {
-        emptyContent()
-    } else {
-        val pullRefreshState =
-            rememberPullRefreshState(refreshing = loading, onRefresh = onRefresh)
-        Box(
-            modifier
-                .fillMaxSize()
-                .pullRefresh(pullRefreshState)) {
-            content()
-        }
-        PullRefreshIndicator(refreshing = loading, state = pullRefreshState,modifier.fillMaxWidth())
-    }
-
-}
 
 
 @Composable

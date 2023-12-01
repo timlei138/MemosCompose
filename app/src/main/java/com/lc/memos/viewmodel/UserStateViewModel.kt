@@ -1,5 +1,7 @@
 package com.lc.memos.viewmodel
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -9,6 +11,7 @@ import androidx.lifecycle.viewModelScope
 import com.lc.memos.data.Status
 import com.lc.memos.data.User
 import com.lc.memos.data.UserRepository
+import com.lc.memos.data.api.MemosApiService
 import com.lc.memos.di.DefaultDispatcher
 import com.lc.memos.ui.WhileUISubscribed
 import com.lc.mini.call.ApiResponse
@@ -22,8 +25,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.OkHttpClient
 import timber.log.Timber
 import javax.inject.Inject
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
 
 enum class SignMethod {
     USERNAME_AND_PASSWORD,
@@ -38,11 +44,16 @@ data class LoginUiState(
 
 @HiltViewModel
 class UserStateViewModel @Inject constructor(
+    private val memosApiService: MemosApiService,
     @DefaultDispatcher private val dispatcher: CoroutineDispatcher,
     private val repository: UserRepository
 ) : ViewModel() {
 
     var currUser: User? by mutableStateOf(User())
+
+    val host: String get() = memosApiService.host ?: ""
+
+    val okHttpClient: OkHttpClient  get() = memosApiService.client
 
     val status: Status? get() = repository.status()
 
@@ -54,7 +65,7 @@ class UserStateViewModel @Inject constructor(
     suspend fun loadCurrentUser(): ApiResponse<User> = withContext(dispatcher){
         Timber.d("loadCurrentUser")
         repository.me().suspendOnSuccess {
-            currUser = data
+            currUser = data.copy(avatarIcon = getAvatarByte(data.avatarUrl))
         }
     }
 
@@ -67,8 +78,9 @@ class UserStateViewModel @Inject constructor(
             _uiState.update { it.copy(loading = true, msg = "") }
             when (val result = repository.signInWithPassword(host, user, pwd)) {
                 is ApiResponse.Success -> {
+
                     _uiState.update { it.copy(loading = false, success = true) }
-                    currUser = result.data
+                    currUser = result.data.copy(avatarIcon = getAvatarByte(result.data.avatarUrl))
                 }
                 is ApiResponse.Failure -> _uiState.update {
                     it.copy(
@@ -89,6 +101,15 @@ class UserStateViewModel @Inject constructor(
 
     fun signOut() {
 
+    }
+
+    @OptIn(ExperimentalEncodingApi::class)
+    private fun getAvatarByte(iconStr: String?) = iconStr?.let {
+
+        if (iconStr.indexOf(",") > 0)
+            Base64.Default.decode(iconStr.split(",")[1])
+        else
+            null
     }
 }
 

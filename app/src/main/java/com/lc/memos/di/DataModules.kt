@@ -65,7 +65,7 @@ object MemoDatabaseModel {
             it.readTimeout(30, TimeUnit.SECONDS)
             it.writeTimeout(30, TimeUnit.SECONDS).addInterceptor(MemosApiInterceptor())
                 .addInterceptor(HttpLoggingInterceptor().also {
-                    it.level = HttpLoggingInterceptor.Level.BODY
+                    it.level = HttpLoggingInterceptor.Level.BASIC
                 })
             it.cookieJar(NetCookieJar(cookieManager))
             it.build()

@@ -50,7 +50,10 @@ class MemosNavigationActions(private val navController: NavHostController){
     }
 
     fun navigateToResource(){
-        navController.navigate(RESOURCE_SCREEN)
+        navController.navigate(RESOURCE_SCREEN){
+            restoreState = true
+            launchSingleTop = true
+        }
     }
 
     fun navigateToCollect(){

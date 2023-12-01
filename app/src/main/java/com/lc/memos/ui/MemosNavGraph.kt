@@ -10,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.lc.memos.ui.page.home.HomeScreen
 import com.lc.memos.ui.page.login.LoginScreen
+import com.lc.memos.ui.page.resource.ResourceScreen
 import com.lc.memos.ui.page.settings.SettingsScreen
 import timber.log.Timber
 
@@ -33,16 +34,19 @@ fun MemosNavGraph(
 
         }
 
+        composable(MemosDestinations.ROUTE_RESOURCE){
+            ResourceScreen{
+                navigationControl.popBackStack()
+            }
+        }
+
+
         composable(MemosDestinations.ROUTE_LOGIN) {
             LoginScreen(loginSuccess = loginSuccess)
         }
 
         composable(MemosDestinations.ROUTE_SETTING){
             SettingsScreen({
-                Timber.d("backQueue=>${navigationControl.backQueue.size}")
-                navigationControl.backQueue.forEach {
-                    Timber.d("${it.id} ${it.destination.route} $it")
-                }
                 navigationControl.popBackStack()
             })
         }

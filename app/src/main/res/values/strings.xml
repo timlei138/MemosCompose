@@ -16,4 +16,19 @@
     <string name="logout">LogOut</string>
     <string name="login_with_username">Username and password</string>
     <string name="login_with_token">Open API</string>
+
+
+    <string name="action_pin">Pin</string>
+
+    <string name="action_unpin">UnPin</string>
+
+    <string name="action_edit">Edit</string>
+
+    <string name="action_share">Share</string>
+
+    <string name="action_delete">Delete</string>
+
+    <string name="action_archive">Archive</string>
+
+
 </resources>

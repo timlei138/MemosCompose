@@ -8,6 +8,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.CollectionsBookmark
+import androidx.compose.material.icons.outlined.GridView
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Inventory2
+import androidx.compose.material.icons.outlined.PhotoLibrary
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material.icons.outlined.Tag
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -88,8 +94,8 @@ fun AppDrawer(
             label = { Text(text = stringResource(id = R.string.navigate_home)) },
             icon = {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_navigate_home_24),
-                    contentDescription = null
+                    Icons.Outlined.GridView,
+                    contentDescription = "Memos"
                 )
             },
             selected = currentRoute == MemosDestinations.ROUTE_HOME,
@@ -104,7 +110,7 @@ fun AppDrawer(
             label = { Text(text = stringResource(id = R.string.navigate_explore)) },
             icon = {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_navigate_explore_24),
+                    Icons.Outlined.Home,
                     contentDescription = null
                 )
             },
@@ -120,7 +126,7 @@ fun AppDrawer(
             label = { Text(text = stringResource(id = R.string.navigate_resource)) },
             icon = {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_navigate_media_24),
+                    Icons.Outlined.PhotoLibrary,
                     contentDescription = null
                 )
             },
@@ -136,7 +142,7 @@ fun AppDrawer(
             label = { Text(text = stringResource(id = R.string.navigate_collect)) },
             icon = {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_navigate_collect_24),
+                    Icons.Outlined.CollectionsBookmark,
                     contentDescription = null
                 )
             },
@@ -152,7 +158,7 @@ fun AppDrawer(
             label = { Text(text = stringResource(id = R.string.navigate_setting)) },
             icon = {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_navigate_settings_24),
+                    Icons.Outlined.Settings,
                     contentDescription = null
                 )
             },
