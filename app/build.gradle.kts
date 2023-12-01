@@ -108,7 +108,6 @@ dependencies {
     implementation(libs.kotlinx.serialization)
 
     //Model
-    implementation(project(mapOf("path" to ":cookieStore")))
     implementation(project(mapOf("path" to ":miniRequest")))
 
     testImplementation("junit:junit:4.13.2")

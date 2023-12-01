@@ -78,8 +78,8 @@ class UserStateViewModel @Inject constructor(
             _uiState.update { it.copy(loading = true, msg = "") }
             when (val result = repository.signInWithPassword(host, user, pwd)) {
                 is ApiResponse.Success -> {
-
                     _uiState.update { it.copy(loading = false, success = true) }
+
                     currUser = result.data.copy(avatarIcon = getAvatarByte(result.data.avatarUrl))
                 }
                 is ApiResponse.Failure -> _uiState.update {
@@ -105,7 +105,6 @@ class UserStateViewModel @Inject constructor(
 
     @OptIn(ExperimentalEncodingApi::class)
     private fun getAvatarByte(iconStr: String?) = iconStr?.let {
-
         if (iconStr.indexOf(",") > 0)
             Base64.Default.decode(iconStr.split(",")[1])
         else

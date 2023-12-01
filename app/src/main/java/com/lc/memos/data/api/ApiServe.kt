@@ -35,12 +35,12 @@ data class Resource(
             .appendPath(filename).build()
     }
 
-    fun toThumbnailFileUri(host: String,size: Int = 1): Uri {
+    fun toThumbnailFileUri(host: String, size: Int = 1): Uri {
         if (externalLink.isNotEmpty()) {
             return Uri.parse(externalLink)
         }
         return Uri.parse(host).buildUpon().appendPath("o").appendPath("r").appendPath(id.toString())
-            .appendQueryParameter("thumbnail","$size").build()
+            .appendQueryParameter("thumbnail", "$size").build()
     }
 }
 
@@ -54,16 +54,14 @@ enum class MemoVisibility(val state: String) {
 }
 
 class MemosApiInterceptor : Interceptor {
+    var token = ""
     override fun intercept(chain: Interceptor.Chain): Response {
         val original = chain.request()
         val request = original.newBuilder().let {
             it.method(original.method, original.body)
-//            it.headers(
-//                okhttp3.Headers.headersOf(
-//                    "Authorization:Bearer $API_TOKEN",
-//                    "Accept:application/json"
-//                )
-//            )
+            it.headers(
+                okhttp3.Headers.Builder().add("Authorization", "Bearer $token").build()
+            )
             it.build()
         }
         return chain.proceed(request)

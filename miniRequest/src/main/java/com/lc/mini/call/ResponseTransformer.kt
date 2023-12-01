@@ -194,6 +194,7 @@ public suspend inline fun <T, V> ApiResponse<T>.suspendOnSuccess(
  *
  * @return The original [ApiResponse].
  */
+@OptIn(ExperimentalContracts::class)
 @JvmSynthetic
 public inline fun <T> ApiResponse<T>.onFailure(
     crossinline onResult: ApiResponse.Failure<T>.() -> Unit,

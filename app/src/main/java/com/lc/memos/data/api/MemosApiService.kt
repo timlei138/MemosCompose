@@ -47,7 +47,6 @@ class MemosApiService @Inject constructor(
     private val mutex = Mutex()
 
 
-
     private fun loadStatus() = scope.launch {
         memosApi?.status()?.suspendOnSuccess {
             status = data
@@ -61,19 +60,21 @@ class MemosApiService @Inject constructor(
                 val host = it[DataStoreKeys.Host.key]
                 val openId = it[DataStoreKeys.OpenId.key]
                 token = it[DataStoreKeys.AccountToken.key]
-                if (host?.isNotEmpty() == true){
-                    val(_client,api) = createClient(host,openId)
+                if (host?.isNotEmpty() == true) {
+                    val (_client, api) = createClient(host, openId)
                     memosApi = api
                     this@MemosApiService.host = host
                     client = _client
                 }
+                if (token?.isNotEmpty() == true)
+                    updateToken()
             }
         }
         loadStatus()
     }
 
 
-    fun createClient(host: String,openId: String? = ""): Pair<OkHttpClient,MemosApi>{
+    fun createClient(host: String, openId: String? = ""): Pair<OkHttpClient, MemosApi> {
         val client = okHttpClient
 
         return client to Retrofit.Builder().baseUrl(host).client(okHttpClient)
@@ -84,16 +85,21 @@ class MemosApiService @Inject constructor(
     }
 
 
-    suspend fun update(host: String,openId: String?){
+    suspend fun update(host: String, openId: String?, token: String?) {
         context.dataStore.edit {
             it[DataStoreKeys.Host.key] = host
-            if (openId?.isNotEmpty() == true){
+            if (openId?.isNotEmpty() == true) {
                 it[DataStoreKeys.OpenId.key] = openId
-            }else
+            } else
                 it.remove(DataStoreKeys.OpenId.key)
+            if (token?.isNotEmpty() == true) {
+                it[DataStoreKeys.AccountToken.key] = token
+                this.token = token
+                updateToken()
+            }
         }
         mutex.withLock {
-            val (client,memosApi) = createClient(host,openId)
+            val (client, memosApi) = createClient(host, openId)
             this.client = client
             this.memosApi = memosApi
             this.host = host
@@ -102,45 +108,23 @@ class MemosApiService @Inject constructor(
         loadStatus()
     }
 
-    suspend fun clearToken(){
+
+    private fun updateToken() {
+        client.interceptors.filterIsInstance(MemosApiInterceptor::class.java).first().token =
+            this.token ?: ""
+    }
+
+    suspend fun clearToken() {
         token = ""
         context.dataStore.edit {
             it.remove(DataStoreKeys.AccountToken.key)
         }
     }
 
-    suspend fun <T> call(block: suspend (MemosApi) -> ApiResponse<T>): ApiResponse<T>{
+    suspend fun <T> call(block: suspend (MemosApi) -> ApiResponse<T>): ApiResponse<T> {
         return memosApi?.let { block(it) } ?: ApiResponse.exception(MemosException.noLogin)
     }
 
-//    suspend fun <T> call(block: suspend  (MemosApi) -> ApiResponse<T> ): ApiResponse<T>{
-//        Timber.d("memosApi $memosApi")
-//        return memosApi?.let {
-//            try {
-//                block(it)
-//            }catch (e: Exception){
-//                if (e is HttpException){
-//                    val responseError = isServiceJson(e.response()?.errorBody()?.toString())
-//                    val msg = if (responseError.isEmpty()) e.message() else responseError
-//                    ApiResponse.create(e.code(),msg)
-//                }else
-//                    ApiResponse.create(-1000,"")
-//            }
-//
-//        }?: ApiResponse.create(-1000,MemosException.noLogin.localizedMessage)
-//
-//    }
-
-
-//    private fun isServiceJson(response: String?): String {
-//        if (response.isNullOrEmpty()) return ""
-//        try {
-//            val json = JSONObject(response)
-//            return json.getString("error")
-//        } catch (e: Exception) {
-//            return ""
-//        }
-//    }
 
 }
 
